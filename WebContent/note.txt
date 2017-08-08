@@ -1,0 +1,5 @@
+1.首先运行ActiveMQ
+
+2.运行项目
+
+3.浏览器访问：http://localhost:8080/ActiveMQDemo/

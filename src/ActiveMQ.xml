@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:amq="http://activemq.apache.org/schema/core"
+	xmlns:jms="http://www.springframework.org/schema/jms"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans   
+        http://www.springframework.org/schema/beans/spring-beans-4.0.xsd   
+        http://www.springframework.org/schema/context   
+        http://www.springframework.org/schema/context/spring-context-4.0.xsd
+        http://www.springframework.org/schema/jms
+        http://www.springframework.org/schema/jms/spring-jms-4.0.xsd
+        http://activemq.apache.org/schema/core
+        http://activemq.apache.org/schema/core/activemq-core-5.8.0.xsd">
+
+	<!-- ActiveMQ 连接工厂 -->
+ 	<!-- 真正可以产生Connection的ConnectionFactory，由对应的 JMS服务厂商提供-->
+	<!-- 如果连接网络：tcp://ip:61616；未连接网络：tcp://localhost:61616 以及用户名，密码-->
+	<amq:connectionFactory id="amqConnectionFactory"
+		brokerURL="tcp://10.11.162.106:61616" userName="wangtao34" password="Abc123++"  />
+
+	<!-- Spring Caching连接工厂 -->
+ 	<!-- Spring用于管理真正的ConnectionFactory的ConnectionFactory -->  
+	<bean id="connectionFactory" class="org.springframework.jms.connection.CachingConnectionFactory">
+		<!-- 目标ConnectionFactory对应真实的可以产生JMS Connection的ConnectionFactory -->  
+  		<property name="targetConnectionFactory" ref="amqConnectionFactory"></property>
+  		<!-- 同上，同理 -->
+		<!-- <constructor-arg ref="amqConnectionFactory" /> -->
+		<!-- Session缓存数量 -->
+		<property name="sessionCacheSize" value="100" />
+	</bean>
+	
+	 <!-- 定义消息队列（Queue） -->
+    <bean id="queueDestination" class="org.apache.activemq.command.ActiveMQQueue">
+        <!-- 设置消息队列的名字 -->
+        <constructor-arg>
+            <value>wangtao34.demo.queue</value>
+        </constructor-arg>
+    </bean>
+	 <!-- 定义topic -->
+    <bean id="topicDestination" class="org.apache.activemq.command.ActiveMQTopic">
+        <!-- 设置topic的名字 -->
+        <constructor-arg>
+            <value>wangtao34.demo.topic</value>
+        </constructor-arg>
+    </bean>
+	
+	<!-- 定义JmsTemplate的Queue类型 -->
+	<bean id="jmsQueueTemplate" class="org.springframework.jms.core.JmsTemplate">
+		<!-- 这个connectionFactory对应的是我们定义的Spring提供的那个ConnectionFactory对象 -->  
+		<constructor-arg ref="connectionFactory" />
+		<property name="receiveTimeout" value="1000" />
+		<!-- 非pub/sub模型（发布/订阅），即队列模式 -->
+		<property name="pubSubDomain" value="false" />
+	</bean>
+	
+	<!-- 定义JmsTemplate的Topic类型 -->
+	<bean id="jmsTopicTemplate" class="org.springframework.jms.core.JmsTemplate">
+		 <!-- 这个connectionFactory对应的是我们定义的Spring提供的那个ConnectionFactory对象 -->  
+		<constructor-arg ref="connectionFactory" />
+		<property name="receiveTimeout" value="1000" />
+		<!-- pub/sub模型（发布/订阅） -->
+		<property name="pubSubDomain" value="true" />
+	</bean>
+	
+	<!--Spring JmsTemplate 的消息生产者 end-->
+	
+	<!-- 配置消息队列监听者（Queue） -->
+    <bean id="queueMessageListener1" class="com.tgb.SpringActivemq.mq.listener.QueueMessageListener" />
+    
+    <!-- 显示注入消息监听容器（Queue），配置连接工厂，监听的目标是queueDestination，监听器是上面定义的监听器 -->
+    <bean id="queueListenerContainer1"
+        class="org.springframework.jms.listener.DefaultMessageListenerContainer">
+        <property name="connectionFactory" ref="connectionFactory" />
+        <property name="destination" ref="queueDestination" />
+        <property name="messageListener" ref="queueMessageListener1" />
+    </bean>
+	<!-- 配置消息队列监听者（Queue） -->
+    <bean id="queueMessageListener2" class="com.tgb.SpringActivemq.mq.listener.QueueMessageListener" />
+    
+    <!-- 显示注入消息监听容器（Queue），配置连接工厂，监听的目标是queueDestination，监听器是上面定义的监听器 -->
+    <bean id="queueListenerContainer2"
+        class="org.springframework.jms.listener.DefaultMessageListenerContainer">
+        <property name="connectionFactory" ref="connectionFactory" />
+        <property name="destination" ref="queueDestination" />
+        <property name="messageListener" ref="queueMessageListener2" />
+    </bean>
+    
+    
+	<!-- 配置消息TOPIC监听者（Topic） -->
+    <bean id="topicMessageListener1" class="com.tgb.SpringActivemq.mq.listener.TopicMessageListener" />
+    
+    <!-- 显示注入消息监听容器（Topic），配置连接工厂，监听的目标是topicDestination，监听器是上面定义的监听器 	-->
+    <bean id="topicListenerContainer1"
+        class="org.springframework.jms.listener.DefaultMessageListenerContainer">
+        <property name="connectionFactory" ref="connectionFactory" />
+        <!--  <property name="destinationName" value="wangtao34.demo.topic" /> -->
+        <property name="destination" ref="topicDestination" />
+        <property name="messageListener" ref="topicMessageListener1" />
+        <property name="concurrentConsumers" value="1" />
+    	<property name="cacheLevel" value="3"/>
+        <!--  <property name="concurrentConsumers" value="5"/>
+    	<property name="messageSelector" value="CLIENT='DEMO'" />
+        <property name="maxConcurrentConsumers" value="10"/> -->
+    </bean>
+	<!-- 配置消息TOPIC监听者（Topic）     -->
+    <bean id="topicMessageListener2" class="com.tgb.SpringActivemq.mq.listener.TopicMessageListener" />
+
+    <!-- 显示注入消息监听容器（Topic），配置连接工厂，监听的目标是topicDestination，监听器是上面定义的监听器 	-->
+    <bean id="topicListenerContainer2"
+        class="org.springframework.jms.listener.DefaultMessageListenerContainer">
+        <property name="connectionFactory" ref="connectionFactory" />
+        <!--  <property name="destinationName" value="wangtao34.demo.topic" /> -->
+        <property name="destination" ref="topicDestination" />
+        <property name="messageListener" ref="topicMessageListener2" />
+        <property name="concurrentConsumers" value="1" />
+    	<property name="cacheLevel" value="3"/>
+        <!--  <property name="concurrentConsumers" value="5"/>
+    	<property name="messageSelector" value="CLIENT='DEMO'" />
+        <property name="maxConcurrentConsumers" value="10"/> -->
+    </bean>
+
+	
+</beans>  
