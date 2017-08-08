@@ -91,7 +91,7 @@ button{
 <body>
 	<h1>ActiveMQ Demo</h1>
 	<div id="producer">
-		<h2>Producer</h2>
+		<h2>发送</h2>
 		<textarea id="message"></textarea>
 		<br>
 		<br>
@@ -100,7 +100,7 @@ button{
 		<br>
 		<span id="status"></span>
 		<br>
-		<h3><a href="receive.jsp">返回接收页面</a></h3>
+		<h3><a href="receive.jsp" target="_blank">显示接收页面</a></h3>
 	</div>
 </body>
 </html>
