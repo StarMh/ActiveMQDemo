@@ -19,23 +19,27 @@ import org.springframework.stereotype.Component;
 
 @Component("queueSender")
 public class QueueSender {
-	
+
 	@Autowired
 	@Qualifier("jmsQueueTemplate")
-	private JmsTemplate jmsTemplate;//通过@Qualifier修饰符来注入对应的bean
-	
+	private JmsTemplate jmsTemplate;// 通过@Qualifier修饰符来注入对应的bean
+
 	/**
 	 * 发送一条消息到指定的队列（目标）
-	 * @param destination 队列名称
-	 * @param message 消息内容
+	 * 
+	 * @param destination
+	 *            队列名称
+	 * @param message
+	 *            消息内容
 	 */
 	public void send(Destination destination,final String message){
-			jmsTemplate.send(destination, new MessageCreator() {
+		System.out.println("发送queue消息:"+message);
+		jmsTemplate.send(destination, new MessageCreator() {
 			@Override
 			public Message createMessage(Session session) throws JMSException {
 				return session.createTextMessage(message);
 			}
 		});
 	}
-	
+
 }

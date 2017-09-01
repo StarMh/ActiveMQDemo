@@ -33,6 +33,7 @@ public class TopicSender {
 	 * @param message
 	 */
 	public void send(Destination destination,final String message){
+		System.out.println("发送topic消息:"+message);
 		jmsTemplate.send(destination, new MessageCreator() {
 			@Override
 			public Message createMessage(Session session) throws JMSException {

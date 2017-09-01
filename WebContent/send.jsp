@@ -17,7 +17,7 @@
 <meta http-equiv="cache-control" content="no-cache">
 <meta http-equiv="expires" content="0">
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
-<script type="text/javascript" src="<%=basePath%>resources/jquery-1.11.0.min.js"></script>
+<script type="text/javascript" src="resources/jquery-1.11.0.min.js"></script>
 <style type="text/css">
 .h1 {
 	margin: 0 auto;
@@ -100,7 +100,8 @@ button{
 		<br>
 		<span id="status"></span>
 		<br>
-		<h3><a href="receive.jsp" target="_blank">显示接收页面</a></h3>
+		<h3><a href="activemq/queuelistener" target="_blank">新建queue监听器</a></h3>
+		<h3><a href="activemq/topiclistener" target="_blank">新建topic监听器</a></h3>
 	</div>
 </body>
 </html>

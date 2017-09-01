@@ -16,8 +16,7 @@
 <meta http-equiv="cache-control" content="no-cache">
 <meta http-equiv="expires" content="0">
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
-<script type="text/javascript"
-	src="<%=basePath%>resources/jquery-1.11.0.min.js"></script>
+<script type="text/javascript" src="resources/jquery-1.11.0.min.js"></script>
 <style type="text/css">
 .h1 {
 	margin: 0 auto;
